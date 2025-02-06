@@ -53,12 +53,14 @@ const getDigitSum = (num: number): number => {
 
 const getProperties = (num: number): string[] => {
   const properties: string[] = [];
+  const isNumArmstrong = isArmstrong(num);
+  const isEven = num % 2 === 0;
   
-  if (isArmstrong(num)) {
+  if (isNumArmstrong) {
     properties.push('armstrong');
   }
   
-  properties.push(num % 2 === 0 ? 'even' : 'odd');
+  properties.push(isEven ? 'even' : 'odd');
   
   return properties;
 };
@@ -68,6 +70,7 @@ const getFunFact = async (num: number): Promise<string> => {
     const response = await axios.get(`http://numbersapi.com/${num}/math`);
     return response.data;
   } catch (error) {
+    // Fallback fact if API fails
     return `${num} is ${num % 2 === 0 ? 'even' : 'odd'} and ${isPrime(num) ? 'is' : 'is not'} prime.`;
   }
 };
@@ -91,7 +94,7 @@ export const handler: Handler = async (event) => {
 
   const number = event.queryStringParameters?.number;
 
-  // Validate input
+  // Validate input - must be a valid integer
   if (!number || isNaN(Number(number)) || !Number.isInteger(Number(number))) {
     const response: ErrorResponse = {
       number: number || 'invalid',
