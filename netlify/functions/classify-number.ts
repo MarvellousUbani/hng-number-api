@@ -13,16 +13,17 @@ interface NumberResponse {
 }
 
 interface ErrorResponse {
-  number: string | number;
   error: true;
+  number: string;
 }
 
 const isArmstrong = (num: number): boolean => {
-  const digits = String(Math.abs(num)).split('');
-  const power = digits.length;
-  const sum = digits.reduce((acc, digit) => 
+  if (num < 1) return false;
+  const numStr = String(num);
+  const power = numStr.length;
+  const sum = numStr.split('').reduce((acc, digit) => 
     acc + Math.pow(parseInt(digit), power), 0);
-  return sum === Math.abs(num);
+  return sum === num;
 };
 
 const isPrime = (num: number): boolean => {
@@ -39,10 +40,13 @@ const isPrime = (num: number): boolean => {
 const isPerfect = (num: number): boolean => {
   if (num <= 1) return false;
   let sum = 1;
+  
   for (let i = 2; i <= Math.sqrt(num); i++) {
     if (num % i === 0) {
       sum += i;
-      if (i !== num / i) sum += num / i;
+      if (i !== num && i !== num / i) {
+        sum += num / i;
+      }
     }
   }
   return sum === num;
@@ -75,14 +79,13 @@ const getFunFact = async (num: number): Promise<string> => {
 };
 
 export const handler: Handler = async (event) => {
-  // Enable CORS
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS'
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Content-Type': 'application/json'
   };
 
-  // Handle OPTIONS request for CORS
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 204,
@@ -93,49 +96,43 @@ export const handler: Handler = async (event) => {
 
   const number = event.queryStringParameters?.number;
 
-  // Validate input - must be a valid integer
   if (!number || number.trim() === '') {
-    const response: ErrorResponse = {
-      number: number || '',
-      error: true
-    };
-    
     return {
       statusCode: 400,
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify(response)
+      headers,
+      body: JSON.stringify({
+        error: true,
+        number: number || ""
+      })
     };
   }
 
-  // Check if the input is a valid number
-  const parsedNumber = parseInt(number);
-  if (isNaN(parsedNumber) || !Number.isInteger(parsedNumber)) {
-    const response: ErrorResponse = {
-      number: number,
-      error: true
-    };
-    
+  if (isNaN(Number(number)) || !Number.isInteger(Number(number))) {
     return {
       statusCode: 400,
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify(response)
+      headers,
+      body: JSON.stringify({
+        error: true,
+        number: number
+      })
     };
   }
 
-  const funFact = await getFunFact(parsedNumber);
+  const num = parseInt(number);
+  const funFact = await getFunFact(num);
 
   const response: NumberResponse = {
-    number: parsedNumber,
-    is_prime: isPrime(parsedNumber),
-    is_perfect: isPerfect(parsedNumber),
-    properties: getProperties(parsedNumber),
-    digit_sum: getDigitSum(parsedNumber),
+    number: num,
+    is_prime: isPrime(num),
+    is_perfect: isPerfect(num),
+    properties: getProperties(num),
+    digit_sum: getDigitSum(num),
     fun_fact: funFact
   };
 
   return {
     statusCode: 200,
-    headers: { ...headers, 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(response)
   };
 };
