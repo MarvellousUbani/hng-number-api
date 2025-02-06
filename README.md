@@ -5,7 +5,7 @@ A serverless API that takes a number and returns interesting mathematical proper
 ## API Endpoint
 
 ```
-GET [https://your-netlify-site.netlify.app/api/classify-number?number=371](https://number-hng-api-bruva.netlify.app/api/classify-number?number=371)
+GET https://number-hng-api-bruva.netlify.app/api/classify-number?number=371
 ```
 
 ## Response Format
