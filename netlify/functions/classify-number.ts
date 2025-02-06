@@ -67,10 +67,11 @@ const getProperties = (num: number): string[] => {
 
 const getFunFact = async (num: number): Promise<string> => {
   try {
-    const response = await axios.get(`http://numbersapi.com/${num}/math`);
+    const response = await axios.get(`http://numbersapi.com/${num}/math`, {
+      timeout: 5000
+    });
     return response.data;
   } catch (error) {
-    // Fallback fact if API fails
     return `${num} is ${num % 2 === 0 ? 'even' : 'odd'} and ${isPrime(num) ? 'is' : 'is not'} prime.`;
   }
 };
@@ -92,12 +93,13 @@ export const handler: Handler = async (event) => {
     };
   }
 
-  const number = event.queryStringParameters?.number;
+  // Get number from path parameter
+  const number = event.path.split('/').pop();
 
   // Validate input - must be a valid integer
   if (!number || isNaN(Number(number)) || !Number.isInteger(Number(number))) {
     const response: ErrorResponse = {
-      number: number || 'invalid',
+      number: number || "invalid",
       error: true
     };
     
