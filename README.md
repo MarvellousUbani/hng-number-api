@@ -5,7 +5,7 @@ A serverless API that takes a number and returns interesting mathematical proper
 ## API Endpoint
 
 ```
-GET https://your-netlify-site.netlify.app/api/classify-number?number=371
+GET [https://your-netlify-site.netlify.app/api/classify-number?number=371](https://number-hng-api-bruva.netlify.app/api/classify-number?number=371)
 ```
 
 ## Response Format
@@ -56,8 +56,8 @@ GET https://your-netlify-site.netlify.app/api/classify-number?number=371
 
 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/number-classification-api
-cd number-classification-api
+git clone https://github.com/MarvellousUbani/hng-number-api
+cd hng-number-api
 ```
 
 2. Install dependencies
